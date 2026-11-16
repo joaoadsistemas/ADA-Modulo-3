@@ -21,3 +21,8 @@ spring:
 
 fila:
   transacoes: antifraude.transacoes
+
+antifraude:
+  valor-maximo: "5000.00"
+  janela-minutos: 5
+  max-transacoes-na-janela: 3

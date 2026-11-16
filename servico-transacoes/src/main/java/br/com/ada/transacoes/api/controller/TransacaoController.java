@@ -35,4 +35,10 @@ public class TransacaoController {
     public TransacaoResponse buscar(@PathVariable UUID id) {
         return TransacaoResponse.de(service.buscar(id));
     }
+
+    @PostMapping("/{id}/reenviar")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public TransacaoResponse reenviar(@PathVariable UUID id) {
+        return TransacaoResponse.de(service.reenviar(id));
+    }
 }
