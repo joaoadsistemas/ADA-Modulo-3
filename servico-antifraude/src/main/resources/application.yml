@@ -18,6 +18,18 @@ spring:
     port: 5672
     username: ${RABBITMQ_USER:guest}
     password: ${RABBITMQ_PASSWORD:guest}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: 6379
+  # Cache do resultado da análise: o que guarda, por quanto tempo e quando apaga (ver ADR 0006).
+  cache:
+    type: redis
+    cache-names: analises
+    redis:
+      time-to-live: 10m
+      cache-null-values: false
+      key-prefix: "antifraude:"
 
 fila:
   transacoes: antifraude.transacoes
