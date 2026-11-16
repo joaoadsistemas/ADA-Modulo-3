@@ -1,0 +1,56 @@
+# Perfil A: tudo roda com Docker.
+services:
+  # Cada serviço tem o seu próprio banco, em containers separados.
+  postgres-transacoes:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: transacoes
+      POSTGRES_USER: transacoes
+      POSTGRES_PASSWORD: transacoes
+    ports: ["5435:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U transacoes -d transacoes"]
+      interval: 5s
+      retries: 10
+
+  postgres-antifraude:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: antifraude
+      POSTGRES_USER: antifraude
+      POSTGRES_PASSWORD: antifraude
+    ports: ["5434:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U antifraude -d antifraude"]
+      interval: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports: ["5672:5672", "15672:15672"]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      retries: 10
+
+  servico-transacoes:
+    build: ./servico-transacoes
+    ports: ["8081:8081"]
+    environment:
+      DB_HOST: postgres-transacoes
+      DB_PORT: 5432
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      postgres-transacoes: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  servico-antifraude:
+    build: ./servico-antifraude
+    ports: ["8082:8082"]
+    environment:
+      DB_HOST: postgres-antifraude
+      DB_PORT: 5432
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      postgres-antifraude: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }

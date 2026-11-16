@@ -1,0 +1,23 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: servico-transacoes
+  # Banco próprio deste serviço: só ele lê e escreve aqui.
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5435}/transacoes
+    username: ${DB_USER:transacoes}
+    password: ${DB_PASSWORD:transacoes}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: 5672
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+fila:
+  transacoes: antifraude.transacoes
